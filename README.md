@@ -80,7 +80,8 @@ As migrations ficam em `supabase/migrations` e devem ser aplicadas em ordem
 | `…07_parceiros` | parceiros (conta separada da comunidade), planos, assinaturas, produtos (vitrine), métricas anônimas, view `public_partners`, bucket `partner-media` |
 | `…08_admin` | auditoria imutável, configurações, RPCs administrativas e `admin_dashboard()` |
 | `…09_grants_parceiros` | fecha/libera o `EXECUTE` das funções das migrations 07–08 |
-| `…10_aprovacao_hardening` | correções da auditoria do fluxo de aprovação: só conta ativa lê membros/participantes/ponto de encontro e bloqueia; fecha escrita em `admin_users` |
+| `…10_approval_hardening` | correções da auditoria do fluxo de aprovação: só conta ativa lê membros/participantes/ponto de encontro e bloqueia; fecha escrita em `admin_users` |
+| `…11_security_review` | auditoria pré-aplicação: helpers sem oráculo de uid, admin só com profile, limites/URLs de mídia no banco, privilégios mínimos, `pg_temp`, Storage seguro |
 
 Depois de aplicar:
 
@@ -101,7 +102,7 @@ banned e deleted **não** acessam nada da comunidade: o gate existe nas páginas
 A tabela `admin_users` não tem policy nem privilégio de escrita para `authenticated`/`anon`: **nenhuma chamada da API consegue criar
 admin** — só o SQL Editor do Supabase (papel `postgres`) ou a service role.
 
-1. Crie a conta com um e-mail dedicado (pelo app em `/cadastro` ou em *Authentication → Users → Add user*).
+1. Crie a conta com um e-mail dedicado **de motoqueira** (pelo app em `/cadastro` ou em *Authentication → Users → Add user*): o admin precisa ter `profiles` — contas de parceiro não podem ser admin (a FK de `admin_users` aponta para `profiles`).
 2. No **SQL Editor** do painel do Supabase:
 
    ```sql
