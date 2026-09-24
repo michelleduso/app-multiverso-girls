@@ -97,6 +97,33 @@ Depois de aplicar:
 → `status = 'approved'` → `is_active_member()` passa a ser verdadeiro e a comunidade abre. Pending, rejected, suspended (em vigor),
 banned e deleted **não** acessam nada da comunidade: o gate existe nas páginas (`requireMember`) **e** no banco (toda policy/RPC usa `is_active_member()`).
 
+### Confirmação de e-mail no cadastro
+
+`/cadastro` e `/quero-ser-parceiro` chamam `auth.signUp`. Se **Confirm email** estiver ligado (Authentication →
+Providers → Email), o Supabase manda um e-mail cujo link precisa apontar para a rota `app/auth/confirm/route.ts`
+deste app — ela chama `supabase.auth.verifyOtp({ token_hash, type })` no client SSR (`lib/supabase/server.ts`),
+o que grava a sessão em cookies. Token inválido/expirado, ou qualquer link sem `token_hash`/`type` reconhecidos,
+cai em `/erro-confirmacao` (nunca na tela genérica de erro).
+
+O template **Confirm signup** é único e compartilhado pelo Supabase — motoqueira e parceiro/lojista recebem o
+mesmo e-mail. Por isso a rota **não confia em nenhum parâmetro da URL** para decidir o destino: depois de
+confirmar, ela consulta o tipo real da conta (existe linha em `partners`? é parceiro; senão é motoqueira) e manda
+cada uma para a tela de espera certa — motoqueira para `/aguardando` (perfil continua `pending` até a
+administradora aprovar, ver fluxo acima), parceiro/lojista para `/parceiro` (o próprio painel já mostra o aviso
+"cadastro em análise" enquanto `partners.status <> 'approved'` — não existe uma tela de espera separada para
+parceiro). Nenhuma das duas ganha acesso à comunidade ou publica algo antes da aprovação.
+
+**Configure o template** em Authentication → Email Templates → **Confirm signup**, trocando o link para:
+
+```
+{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup
+```
+
+Em **Authentication → URL Configuration**, o **Site URL** define `{{ .SiteURL }}`: use
+`http://localhost:3000` para testar em DEV e o domínio real em produção (troque ao publicar, ou adicione ambos em
+**Redirect URLs**). Sem isso, o link do e-mail continua indo para o verificador padrão do Supabase, que não fecha a
+sessão em cookies deste app.
+
 ### Criando o primeiro administrador
 
 A tabela `admin_users` não tem policy nem privilégio de escrita para `authenticated`/`anon`: **nenhuma chamada da API consegue criar
