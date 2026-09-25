@@ -92,7 +92,7 @@ O SQL foi testado num Postgres real, mas sem as camadas do Supabase; embeds do P
 
 **Infra e banco**
 - [ ] Criar o projeto Supabase; aplicar as migrations `01`→`09` em ordem.
-- [ ] Preencher `.env.local`/variáveis do host: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (nunca `NEXT_PUBLIC_`).
+- [ ] Preencher `.env.local`/variáveis do host: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (nunca `NEXT_PUBLIC_`).
 - [ ] Conferir que `messages`, `conversation_reads`, `conversations` e `notifications` estão na publicação `supabase_realtime`.
 - [ ] Conferir os buckets `ride-images`, `group-covers`, `partner-media` (públicos) e `chat-images` (privado) e suas policies.
 - [ ] Auth: definir Site URL/Redirect URLs, e-mails em português, exigir confirmação de e-mail, senha mínima, CAPTCHA/rate limit; ligar MFA para admins.

@@ -145,4 +145,4 @@ update public.profiles set status = 'approved'
  where id = (select id from auth.users where email = 'admin@seu-dominio.com');
 ```
 
-Depois: preencher `.env.local` (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` — esta última nunca com prefixo `NEXT_PUBLIC_`), `npm run dev`, entrar em `/entrar` com a conta admin (vai para `/admin`) e ativar MFA nela.
+Depois: preencher `.env.local` (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY` — esta última nunca com prefixo `NEXT_PUBLIC_`), `npm run dev`, entrar em `/entrar` com a conta admin (vai para `/admin`) e ativar MFA nela.
