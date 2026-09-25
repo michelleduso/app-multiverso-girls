@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { friendlyError } from "@/lib/auth";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { CATEGORIAS_PARCEIRO } from "@/lib/constants/parceiros";
@@ -23,6 +24,10 @@ export async function signUpPartner(_prev: FormState, formData: FormData): Promi
   if (!EMAIL_RE.test(email)) return { error: "Informe um e-mail válido." };
   if (password.length < 8) return { error: "A senha deve ter pelo menos 8 caracteres." };
   if (formData.get("accepted_terms") !== "on") return { error: "Aceite os Termos de Uso e a Política de Privacidade." };
+
+  if (!isSupabaseConfigured()) {
+    return { error: "Projeto Supabase ainda não configurado (.env.local)." };
+  }
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
@@ -52,6 +57,10 @@ export async function signUpMember(_prev: FormState, formData: FormData): Promis
   if (password.length < 8) return { error: "A senha deve ter pelo menos 8 caracteres." };
   if (formData.get("adult") !== "on") return { error: "A comunidade é exclusiva para maiores de 18 anos." };
   if (formData.get("accepted_terms") !== "on") return { error: "Aceite os Termos de Uso e a Política de Privacidade." };
+
+  if (!isSupabaseConfigured()) {
+    return { error: "Projeto Supabase ainda não configurado (.env.local)." };
+  }
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
